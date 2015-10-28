@@ -1,0 +1,33 @@
+{
+  "name": "arduino-interface",
+  "version": "1.0.0",
+  "description": "Makes it easy to safely interface with your Arduino over serial. It allows you to safely update it too. Great for remote mission critical deployments.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UBCSailbot/arduino-interface.git"
+  },
+  "keywords": [
+    "arduino",
+    "serial",
+    "serialport",
+    "interface",
+    "safe",
+    "update",
+    "scan"
+  ],
+  "author": "UBCSailbot",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/UBCSailbot/arduino-interface/issues"
+  },
+  "homepage": "https://github.com/UBCSailbot/arduino-interface#readme",
+  "dependencies": {
+    "arduino-scanner": "^1.0.2",
+    "avrgirl-arduino": "^1.4.11",
+    "serialport": "^2.0.2"
+  }
+}
