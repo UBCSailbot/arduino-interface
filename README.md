@@ -8,9 +8,7 @@ Want to make sure that your messages are received correctly? No problem! NMEA ch
 Get it through NPM by running: `npm install arduino-interface`
 
 ### Troubleshooting
-Node 0.12.X is required until the `serialport` module is updated.
-
-**Node 4.0 is NOT supported at this time.**
+If your Arduino isn't being detected, you may need to add the productId to the boards.js file in [arduino-scanner](https://github.com/UBCSailbot/arduino-scanner). If this happens, please make a pull request to that repo have the boards.js updated so we can improve the module!
 
 ### Usage Example
 
@@ -22,14 +20,14 @@ var arduino = new Arduino({
 });
 
 // Connect to the Arduino
-// This will start searching for an Arduino and
+// This will start searching for an Arduino and connect to it once one is found
 arduino.connect();
 
 arduino.on('connect', function() {
   console.log('Arduino connected.');
 });
 arduino.on('disconnect', function() {
-  console.log('Arduino serial connection closed. Trying to reopen.');
+  console.log('Arduino serial connection closed. It will try to be reopened.');
 });
 arduino.on('data', function(message) {
   console.log('Data received: ' + message);
