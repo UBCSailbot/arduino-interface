@@ -30,6 +30,7 @@ var Arduino = function(opts) {
 
   self.options = {
     debug: opts.debug || false,
+    baudrate: opts.baudrate || 57600,
     board: opts.board || 'mega',
     nmea: opts.nmea || false
   };
@@ -116,7 +117,7 @@ Arduino.prototype._connectToArduino = function(port) {
   var self = this;
 
   self.serialPort = new SerialPort(port, {
-    baudrate: 57600,
+    baudrate: self.options.baudrate,
     parser: serialport.parsers.readline("\n")
   });
 
@@ -249,7 +250,7 @@ Arduino.prototype._performArduinoFlash = function(hexLocation, cb) {
 /**
  * If the arduino is acting up and we want to reboot it. The callback function
  * will be activated once it has finished.
- * 
+ *
  * @param cb - callback
  */
 Arduino.prototype.reboot = function(cb) {
