@@ -15,6 +15,7 @@ If your Arduino isn't being detected, you may need to add the productId to the b
 ```node
 var Arduino = require('arduino-interface');
 var arduino = new Arduino({
+  baudrate: 9600, // default is 57600
   nmea: true,
   debug: true
 });
