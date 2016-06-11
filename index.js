@@ -13,13 +13,10 @@ var SerialPort = serialport.SerialPort;
 
 var ArduinoScanner = require('arduino-scanner');
 
-// var logSymbols = require('log-symbols');
-// var symbol = matched ? logSymbols.success : logSymbols.error;
-
 /**
  * Constructor
  *
- * @param {object} options - options for consumer to pass in
+ * @param {Object} options Options for consumer to pass in
  */
 var Arduino = function(opts) {
   var self = this;
@@ -35,7 +32,7 @@ var Arduino = function(opts) {
     nmea: opts.nmea || false
   };
 
-  self.debug = self.options.debug ? function (message) {
+  self.debug = self.options.debug ? function(message) {
     console.log('Arduino: ' + message);
   } : function() {};
 
@@ -137,7 +134,7 @@ Arduino.prototype._connectToArduino = function(port) {
     self.emit('disconnect');
     self.serialPort = undefined;
     if (self.isConnected) {
-    self.connect();
+      self.connect();
     }
   });
 
@@ -314,7 +311,7 @@ Arduino.prototype.writeAndDrain = function(message, cb) {
   if (self.options.nmea) {
     // Compute the checksum by XORing all the character values in the string.
     var checksum = 0;
-    for(var i = 0; i < message.length; i++) {
+    for (var i = 0; i < message.length; i++) {
       checksum = checksum ^ message.charCodeAt(i);
     }
 
