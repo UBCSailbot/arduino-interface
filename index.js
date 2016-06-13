@@ -131,8 +131,8 @@ Arduino.prototype._connectToArduino = function(port) {
   });
 
   self.serialPort.on('close', function() {
-    self.emit('disconnect');
     self.serialPort = undefined;
+    self.emit('disconnect');
     if (self.isConnected) {
       self.connect();
     }
@@ -145,6 +145,10 @@ Arduino.prototype._connectToArduino = function(port) {
     }
   });
 };
+
+Arduino.prototype.isOpen = function() {
+  return this.serialPort !== undefined;
+}
 
 /**
  * Stop searching for an arduino or close the connection if it exists.
