@@ -28,6 +28,11 @@ var Arduino = function(opts) {
   self.options = {
     debug: opts.debug || false,
     baudrate: opts.baudrate || 57600,
+    // Strict matching for a specific serial port
+    port: opts.port,
+    // Strict matching for a specifc serial number
+    serialNumber: opts.serialNumber,
+    // Restricts matching if defined
     board: opts.board || 'mega',
     nmea: opts.nmea || false
   };
@@ -52,6 +57,8 @@ var Arduino = function(opts) {
 
   self.arduinoScanner = new ArduinoScanner({
     board: self.options.board,
+    port: self.options.port,
+    serialNumber: self.options.serialNumber,
     debug: self.options.debug
   });
 
@@ -113,7 +120,9 @@ Arduino.prototype.connect = function(interval) {
 Arduino.prototype._connectToArduino = function(port) {
   var self = this;
 
-  self.serialPort = new SerialPort(port, {
+  self.selectedPort = port;
+
+  self.serialPort = new SerialPort(self.selectedPort, {
     baudrate: self.options.baudrate,
     parser: serialport.parsers.readline("\n")
   });
@@ -159,7 +168,9 @@ Arduino.prototype.disconnect = function(cb) {
   var self = this;
 
   if (self.isFlashing) {
-    return cb(new Error('The arduino is in the process of flashing, disconnect failed.'));
+    return cb(new Error(
+      'The arduino is in the process of flashing, disconnect failed.'
+    ));
   }
 
   self.isConnected = false;
@@ -231,6 +242,7 @@ Arduino.prototype._performArduinoFlash = function(hexLocation, cb) {
 
   var avrgirl = new Avrgirl({
     board: self.options.board,
+    port: self.selectedPort,
     debug: self.options.debug
   });
 
@@ -258,7 +270,9 @@ Arduino.prototype.reboot = function(cb) {
   var self = this;
 
   if (self.isFlashing) {
-    return cb(new Error('The arduino is in the process of flashing, reboot failed.'));
+    return cb(new Error(
+      'The arduino is in the process of flashing, reboot failed.'
+    ));
   }
 
   if (!self.isRebooting && self.serialPort) {
