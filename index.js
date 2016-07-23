@@ -8,13 +8,20 @@ var EventEmitter = require('events').EventEmitter;
 
 var Avrgirl = require('avrgirl-arduino');
 
-var serialport = require('serialport');
-var SerialPort = serialport.SerialPort;
+var SerialPort = require('serialport');
 
 var ArduinoScanner = require('arduino-scanner');
 
 /**
  * Constructor
+ *
+ * Available option parameters:
+ *  debug: Whether debug output should be printed to stdout
+ *  baudrate: Baudrate to use (defaults to 57600)
+ *  port: Strict matching to a specific serial port (ex. /dev/tty/USBArduino)
+ *  serialNumber: Strict matching for a specifc serial number
+ *  board: Board type (defaults to mega)
+ *  nmea: Whether to append NMEA checksums to sent messages
  *
  * @param {Object} options Options for consumer to pass in
  */
@@ -115,7 +122,7 @@ Arduino.prototype.connect = function(interval) {
  * Contains the event listeners for the serial port (they have to be here
  * since this is where serialPort is instantiated properly)
  *
- * @param port - the port emitted by scan.js, likely /dev/tty/USBArduino
+ * @param port - the port emitted by arduino-scanner ex. /dev/tty/USBArduino
  */
 Arduino.prototype._connectToArduino = function(port) {
   var self = this;
@@ -124,7 +131,7 @@ Arduino.prototype._connectToArduino = function(port) {
 
   self.serialPort = new SerialPort(self.selectedPort, {
     baudrate: self.options.baudrate,
-    parser: serialport.parsers.readline("\n")
+    parser: SerialPort.parsers.readline('\n')
   });
 
   self.serialPort.on('open', function() {
@@ -149,8 +156,10 @@ Arduino.prototype._connectToArduino = function(port) {
 
   self.serialPort.on('error', function(err) {
     self.emit('error', err);
-    if (self.serialPort.isOpen()) {
-      self.serialPort.close();
+    // Close the port if it's still open
+    // In this context |this| is the serialport
+    if (this.isOpen()) {
+      this.close();
     }
   });
 };
@@ -295,7 +304,7 @@ Arduino.prototype.reboot = function(cb) {
             dtr: false
           }, function(err) {
             setTimeout(function done() {
-              self.debug("Reboot complete.");
+              self.debug('Reboot complete.');
               self.isRebooting = false;
               cb();
             }, 50);
@@ -337,7 +346,7 @@ Arduino.prototype.writeAndDrain = function(message, cb) {
     // first).
     var hexsum = Number(checksum).toString(16).toUpperCase();
     if (hexsum.length < 2) {
-      hexsum = ("00" + hexsum).slice(-2);
+      hexsum = ('00' + hexsum).slice(-2);
     }
 
     message = '$' + message + '*' + hexsum + '\r';
