@@ -7,6 +7,9 @@ Want to make sure that your messages are received correctly? No problem! NMEA ch
 ## Usage
 Get it through NPM by running: `npm install arduino-interface`
 
+## Node Version
+Compatible with node 6.x
+
 ### Troubleshooting
 If your Arduino isn't being detected, you may need to add the productId to the boards.js file in [arduino-scanner](https://github.com/UBCSailbot/arduino-scanner). If this happens, please make a pull request to that repo have the boards.js updated so we can improve the module!
 
