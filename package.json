@@ -1,6 +1,6 @@
 {
   "name": "arduino-interface",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Makes it easy to safely interface with your Arduino over serial. It allows you to safely update it too. Great for remote mission critical deployments.",
   "main": "index.js",
   "scripts": {

@@ -486,6 +486,8 @@ Arduino.prototype.writeAndWaitForAcknowledgement = function (message, cb = () =>
       message: 'Acknowledgment byte not yet received for previous message. Low priority message discarded'
     });
 
+    self.messageQueue.shift();
+
     cb();
     return;
   }
