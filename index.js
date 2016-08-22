@@ -545,7 +545,10 @@ Arduino.prototype._writeAndWaitForAcknowledgementHelper = function () {
         });
         self.fails = 0;
         self.messageQueue = [];
+        clearTimeout(self.timeout);
+        return;
       }
+
 
       clearTimeout(self.timeout);
       if (options.priority === 'low') {
