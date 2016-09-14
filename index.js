@@ -158,6 +158,8 @@ Arduino.prototype.connect = function (interval) {
 };
 
 Arduino.prototype._parseStringMessage = function (message) {
+  var self = this;
+
   if (self.options.nmea && message[0] === '$') {
     // Checking for the '$' allows non-NMEA'd messages to go through unharmed
 
