@@ -2,7 +2,11 @@
 An NPM module which makes it easy to safely interface with your Arduino over serial.
 It allows you to safely update it too.  Great for remote mission critical deployments.
 
-Want to make sure that your messages are received correctly? No problem! NMEA checksums are supported natively!
+It has two modes: Binary mode and String mode.
+
+Binary mode supports SLIP encoding, checksums, and one-way (computer-to-arduino) message confirmation checking for extremely robust communication.
+
+String mode supports NMEA checking to make sure that your messages are received correctly.
 
 ## Usage
 Get it through NPM by running: `npm install arduino-interface`
@@ -13,7 +17,7 @@ Compatible with node 6.x
 ### Troubleshooting
 If your Arduino isn't being detected, you may need to add the productId to the boards.js file in [arduino-scanner](https://github.com/UBCSailbot/arduino-scanner). If this happens, please make a pull request to that repo have the boards.js updated so we can improve the module!
 
-### Usage Example
+### Basic Usage Example
 
 ```node
 var Arduino = require('arduino-interface');
@@ -37,6 +41,47 @@ arduino.on('data', function(message) {
   console.log('Data received: ' + message);
 });
 ```
+
+### Binary Mode Example
+```node
+var Arduino = require('arduino-interface');
+var arduino = new Arduino({
+                    baudrate: 57600,
+                    binary: true,
+                    acknowledgment: true,
+                    nmea: true, // this adds a checksum and byte stuffing with SLIP
+                    debug: true,
+                  });
+
+var options = {
+  attempts: 20, // Number of times to re-attempt sending. Default is 10.
+  priority: 'high', // 'high' or 'low'. Message re-attempts only occur if priority 'high'
+  timeout: 300 // Amount of time to wait for acknowledgment before resending. Default is 200 ms
+};
+
+var data = Buffer.from("this will be a binary message");
+arduino.writeAndWaitForAcknowledgement(data, writeCallback, options);
+```
+
+`writeAndWaitForAcknowledgment` will add the message to a queue of messages to send. This ensures that the messages
+are sent in a proper order. Only if a message succeeds to send and gets an acknowledgement, or fails
+to send after the amount of times specified in the "attempts" will it be dequeued.
+
+The checksum is calculated by the XOR of each byte of your message, and is the very last byte of the message (before being SLIP encoded).
+
+The acknowledgment byte is added automatically by this library if `acknowledgment` is true, and is the sequence number of the message in the queue.
+It is added to the end of the message, before the checksum (and so is included in the checksum). This byte must be sent back from the Arduino
+within the allotted `timeout` field in the `options` object or else the acknowledgment will have been considered a fail and the message will be resent.
+Note that the acknowledgment byte sent back must also be SLIP encoded and have a checksum if `nmea` is enabled.
+
+We recommend using the excellent [Packet Serial](https://github.com/bakercp/PacketSerial) library for Arduino
+SLIP support, and adding your own checksum checker and acknowledgment sender on top of that
+(we may release our own implementation at a later date).
+
+We recommend [Google's Protobuf](https://github.com/google/protobuf) tool to serialize your data, but any serial encoding/decoding should work.
+
+When Binary Mode is enabled, all incoming messages will be run through a SLIP decoding before being surfaced by `arduino.on('data', () => {})`,
+so make sure that your Arduino encodes the data with SLIP before sending it back (can use the above Packet Serial for that as well).
 
 ## Reference Guide
 ### Constructor
@@ -103,6 +148,16 @@ Writes to Arduino and waits for it to finish transmitting before calling the cb.
 
 If the NMEA option was set to true then this message will be sent in accordance
 with the NMEA protocol.
+
+#### .writeAndWaitForAcknowledgement(data, writeCallback, options)
+Write to the arduino and waits for the acknowledgment byte to be returned. Currently only has support
+for Binary Mode, so the data must be a Buffer.
+
+var options = {
+  attempts: 20, // Number of times to re-attempt sending. Default is 10.
+  priority: 'high', // 'high' or 'low'. Message re-attempts only occur if priority 'high'
+  timeout: 300 // Amount of time to wait for acknowledgment before resending. Default is 200 ms
+};
 
 ##### message
 The data to send to the Arduino.

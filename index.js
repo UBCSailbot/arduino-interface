@@ -498,18 +498,6 @@ Arduino.prototype.writeAndWaitForAcknowledgement = function (message, cb = () =>
   self._writeAndWaitForAcknowledgementHelper();
 };
 
-/**
- * Write to the arduino and waits for the acknowledgment bit to be returned. Currently only has support
- * for binary sending.
- * @param message {Buffer} - Binary buffer with message to send
- * @param callback {Function} - Callback
- * @param options {Object} - Options for sending
- * @param options.attempts {Number} - Number of times to re-attempt sending. Default is 10.
- *                                    0 means won't send.
- * @param options.priority {String} - Priority: 'high' or 'low'
- * @param sequenceNumber {Number} - The sequence number of the message we are sending. Used internally. Do not set.
- * @param options.timeout {Number} - Amount of time to wait for acknowledgment before resending. Default is 200 ms
- */
 Arduino.prototype._writeAndWaitForAcknowledgementHelper = function () {
   var self = this;
 
