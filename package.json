@@ -1,6 +1,6 @@
 {
   "name": "arduino-interface",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Makes it easy to safely interface with your Arduino over serial. It allows you to safely update it too. Great for remote mission critical deployments.",
   "main": "index.js",
   "scripts": {
@@ -27,8 +27,8 @@
   "homepage": "https://github.com/UBCSailbot/arduino-interface#readme",
   "dependencies": {
     "arduino-scanner": "^1.2.0",
-    "avrgirl-arduino": "^1.9.3",
-    "serialport": "^4.0.1",
+    "avrgirl-arduino": "^1.9.8",
+    "serialport": "^4.0.3",
     "slip": "^1.0.2"
   }
 }
